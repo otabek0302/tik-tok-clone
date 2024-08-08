@@ -10,9 +10,8 @@ import { AiOutlineMenu } from "react-icons/ai";
 import { ImCancelCircle } from "react-icons/im";
 import { sidebarNav } from "@/utils/constants";
 
-import { TokenResponse, useGoogleLogin } from "@react-oauth/google";
+import { useGoogleLogin } from "@react-oauth/google";
 import { createOrGetUser } from "@/utils";
-import { NextPage } from "next";
 
 import axios from "axios";
 import useAuthStore from "../../../store/authStore";
@@ -23,12 +22,10 @@ const Sidebar = () => {
 
   const { userProfile, addUser } = useAuthStore();
 
-  console.log(userProfile);
 
   const login = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
-      const userInfo = await axios
-        .get("https://www.googleapis.com/oauth2/v3/userinfo", {
+      const userInfo = await axios.get("https://www.googleapis.com/oauth2/v3/userinfo", {
           headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
         })
         .then((res: { data: any }) => res.data);

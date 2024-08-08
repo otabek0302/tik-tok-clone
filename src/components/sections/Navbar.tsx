@@ -1,15 +1,20 @@
 "use client";
-import Image from "next/image";
+
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import useAuthStore from "../../../store/authStore";
 
 import { BiPlus } from "react-icons/bi";
 import { LuSend } from "react-icons/lu";
 import { AiOutlineTikTok } from "react-icons/ai";
 import { LiaComment } from "react-icons/lia";
 import { IoIosSearch } from "react-icons/io";
+import { MdOutlineLogout } from "react-icons/md";
+
+import { googleLogout } from "@react-oauth/google";
 
 const Navbar = () => {
+  const { userProfile, removeUser } = useAuthStore();
+
   return (
     <div className="w-full flex justify-between items-center border-b-[0.5px] border-border py-2 px-4">
       <div className="mr-5 min-w-[300px]">
@@ -32,38 +37,43 @@ const Navbar = () => {
       </div>
       <div className="ml-5">
         <div className="flex items-center">
-          <div className="mr-5">
-            <Link href="/">
-              <button className="flex gap-1.5 items-center justify-center h-9 rounded-sm px-4 bg-white bg-opacity-[0.08]">
-                <BiPlus className="text-2xl text-copy" />
-                <span className="text-copy text-base leading-normal">
-                  Upload
-                </span>
-              </button>
-            </Link>
-          </div>
-          <div className="flex gap-5">
-            <Link href="/">
-              <button className="px-2 relative hover:after:block after:hidden after:content-['Message'] after:absolute after:top-10 after:left-1/2 after:-translate-x-1/2 after:text-copy after:px-3.5 after:py-2 after:bg-white after:bg-opacity-[0.3] after:rounded-xl">
-                <LuSend className="text-2xl text-copy" />
-              </button>
-            </Link>
-            <Link href="/">
-              <button className="px-2 relative hover:after:block after:hidden after:content-['Inbox'] after:absolute after:top-10 after:left-1/2 after:-translate-x-1/2 after:text-copy after:px-3.5 after:py-2 after:bg-white after:bg-opacity-[0.3] after:rounded-xl">
-                <LiaComment className="text-2xl text-copy" />
-              </button>
-            </Link>
-          </div>
-          <div className="ml-7">
-            <div className="relative overflow-hidden rounded-full w-8 h-8 bg-white">
-              <Image
-                src="/avatar.png"
-                fill
-                alt="Avatar"
-                className="object-center object-cover"
-              />
+          {userProfile && (
+            <div className="mr-5">
+              <Link href="/upload">
+                <button className="flex gap-1.5 items-center justify-center h-9 rounded-sm px-4 bg-white bg-opacity-[0.08]">
+                  <BiPlus className="text-2xl text-copy" />
+                  <span className="text-copy text-base leading-normal">
+                    Upload
+                  </span>
+                </button>
+              </Link>
             </div>
-          </div>
+          )}
+          {userProfile && (
+            <div className="flex gap-5">
+              <Link href="/">
+                <button className="px-2 relative hover:after:block after:hidden after:content-['Message'] after:absolute after:top-10 after:left-1/2 after:-translate-x-1/2 after:text-copy after:px-3.5 after:py-2 after:bg-white after:bg-opacity-[0.3] after:rounded-xl">
+                  <LuSend className="text-2xl text-copy" />
+                </button>
+              </Link>
+              <Link href="/">
+                <button className="px-2 relative hover:after:block after:hidden after:content-['Inbox'] after:absolute after:top-10 after:left-1/2 after:-translate-x-1/2 after:text-copy after:px-3.5 after:py-2 after:bg-white after:bg-opacity-[0.3] after:rounded-xl">
+                  <LiaComment className="text-2xl text-copy" />
+                </button>
+              </Link>
+            </div>
+          )}
+          {userProfile && (
+            <button
+              onClick={() => {
+                googleLogout();
+                removeUser();
+              }}
+              className="flex items-center justify-center p-1 ml-7 hover:bg-white hover:bg-opacity-[0.08] rounded-md"
+            >
+              <MdOutlineLogout className="text-3xl fill-white" />
+            </button>
+          )}
         </div>
       </div>
     </div>

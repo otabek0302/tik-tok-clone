@@ -5,5 +5,5 @@ export const client = createClient({
     dataset: "tik-tok-sanity",
     apiVersion: '2023-05-03',
     useCdn: false,
-    token: process.env.SANITY_SECRET_TOKEN,
+    token: process.env.NEXT_PUBLIC_SANITY_SECRET_TOKEN,
 })

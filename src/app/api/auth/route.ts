@@ -40,7 +40,6 @@ export async function POST(request: Request, response: Response) {
         });
 
     } catch (error) {
-        console.error("Error:", error);
         return new Response("Th server is error.", { status: 500 });
     }
 }
