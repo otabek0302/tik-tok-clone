@@ -1,8 +1,10 @@
 "use client";
-import { Post } from "@/lib/types";
-import { NextPage } from "next";
+
 import Image from "next/image";
 import Link from "next/link";
+
+import { Post } from "@/lib/types";
+import { NextPage } from "next";
 import { useEffect, useRef, useState } from "react";
 import { BsFillPauseFill, BsFillPlayFill } from "react-icons/bs";
 import { FaBookmark, FaCommentDots, FaHeart } from "react-icons/fa";
@@ -47,25 +49,67 @@ const PostCard: NextPage<IProps> = ({ post, isShowingOnHome }) => {
 
   if (!isShowingOnHome) {
     return (
-      <div>
-        <Link href={`/detail/${post._id}`}>
+      <div className="relative flex justify-center items-center">
+        <div
+          onMouseEnter={() => setIsHover(true)}
+          onMouseLeave={() => setIsHover(false)}
+          className="relative w-[200px] lg:w-[480px] h-[80vh] rounded-2xl overflow-hidden"
+        >
           <video
             loop
+            autoPlay
+            ref={videoRef}
             src={post.video.asset.url}
-            className="w-[250px] md:w-full rounded-xl cursor-pointer"
+            className="w-full h-full object-cover"
           />
-        </Link>
-        <div className="flex gap-2 -mt-8 items-center ml-4">
-          <p className="text-copy-light text-lg font-medium flex gap-1 items-center">
-            <BsFillPlayFill className="text-2xl" />
-            {post.likes?.length || 0}
-          </p>
+          <div className="w-full absolute bottom-0 z-20 bg-gradient-to-t from-black p-5">
+            <Link href={`/profile/${post.postedBy?._id}`}>
+              <h3 className="my-3 text-copy-light text-sm font-normal leading-tight flex items-center">
+                {post.postedBy.userName}{" "}
+                <GoVerified className="text-blue-400 text-md ml-1" />
+              </h3>
+            </Link>
+            <div
+              className={`flex ${
+                showCaption ? "flex-col" : "flex-row items-center"
+              }`}
+            >
+              <p
+                className={`flex-1 my-3 text-copy-light text-sm font-normal leading-tight ${
+                  showCaption ? "line-clamp-6" : "line-clamp-1"
+                }`}
+              >
+                {post.caption}
+              </p>
+              <button
+                onClick={() => setShowCaption(!showCaption)}
+                className="text-copy-light text-sm font-normal leading-tight cursor-pointer"
+              >
+                <Link href={`/posts/${post._id}`}>
+                  {showCaption ? "show less" : "read more"}
+                </Link>
+              </button>
+            </div>
+            {isHover && (
+              <div className="py-1 flex items-center justify-between">
+                <button onClick={onVideoPress}>
+                  {playing ? (
+                    <BsFillPauseFill className="text-2xl text-copy" />
+                  ) : (
+                    <BsFillPlayFill className="text-2xl text-copy" />
+                  )}
+                </button>
+                <button onClick={onVideoMute}>
+                  {isVideoMuted ? (
+                    <HiVolumeOff className="text-2xl text-copy" />
+                  ) : (
+                    <HiVolumeUp className="text-2xl text-copy" />
+                  )}
+                </button>
+              </div>
+            )}
+          </div>
         </div>
-        <Link href={`/detail/${post._id}`}>
-          <p className="mt-5 text-md text-gray-800 cursor-pointer w-210">
-            {post.caption}
-          </p>
-        </Link>
       </div>
     );
   }
@@ -79,7 +123,6 @@ const PostCard: NextPage<IProps> = ({ post, isShowingOnHome }) => {
       >
         <video
           loop
-          muted
           autoPlay
           ref={videoRef}
           src={post.video.asset.url}
@@ -106,9 +149,9 @@ const PostCard: NextPage<IProps> = ({ post, isShowingOnHome }) => {
             </p>
             <button
               onClick={() => setShowCaption(!showCaption)}
-              className="text-copy-light text-sm font-normal leading-tight"
+              className="text-copy-light text-sm font-normal leading-tight cursor-pointer"
             >
-              <Link href={`/post/${post._id}`}>
+              <Link href={`/posts/${post._id}`}>
                 {showCaption ? "show less" : "read more"}
               </Link>
             </button>
@@ -136,7 +179,7 @@ const PostCard: NextPage<IProps> = ({ post, isShowingOnHome }) => {
       <div className="w-16 h-full flex flex-col justify-center items-center gap-4 p-2">
         <ul className="h-full flex flex-col items-center justify-end gap-4">
           <li className="w-12 h-12 bg-white rounded-full">
-            <Link href="/">
+            <Link href={`/profile/${post.postedBy._id}`}>
               <Image
                 src={post.postedBy?.image}
                 alt={post.postedBy?.userName}

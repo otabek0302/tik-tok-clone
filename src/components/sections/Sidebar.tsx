@@ -20,12 +20,12 @@ const Sidebar = () => {
   const pathname = usePathname();
   const [showSidebar, setShowSidebar] = useState<Boolean>(true);
 
-  const { userProfile, addUser } = useAuthStore();
-
+  const { userProfile, addUser, fetchAllUsers } = useAuthStore();
 
   const login = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
-      const userInfo = await axios.get("https://www.googleapis.com/oauth2/v3/userinfo", {
+      const userInfo = await axios
+        .get("https://www.googleapis.com/oauth2/v3/userinfo", {
           headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
         })
         .then((res: { data: any }) => res.data);
@@ -60,7 +60,10 @@ const Sidebar = () => {
             ))}
           </ul>
           {userProfile ? (
-            <SuggestedAccounts profile={userProfile} />
+            <SuggestedAccounts
+              profile={userProfile}
+              fetchAllUsers={fetchAllUsers}
+            />
           ) : (
             <div className="py-2">
               <p className="mb-4 text-copy-lighter text-sm leading-normal font-normal">

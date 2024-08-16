@@ -1,4 +1,4 @@
-import { allPostsQuery } from "@/utils/queries";
+import { allPostsQuery, postDetailQuery } from "@/utils/queries";
 import { client } from "@/utils/sanity";
 
 export const fetchPosts = async () => {

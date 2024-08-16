@@ -1,6 +1,7 @@
 import { NextPage } from "next";
-import React from "react";
+import React, { useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 interface IProfile {
   _id: string;
@@ -11,11 +12,16 @@ interface IProfile {
 
 interface ISuggestedAccountsProps {
   profile: IProfile;
+  fetchAllUsers: () => void;
 }
 
-const SuggestedAccounts: NextPage<ISuggestedAccountsProps> = ({ profile }) => {
+const SuggestedAccounts: NextPage<ISuggestedAccountsProps> = ({ profile, fetchAllUsers }) => {
+  useEffect(() => {
+    fetchAllUsers();
+  }, [fetchAllUsers]);
+
   return (
-    <div>
+    <Link href={`/profile/${profile._id}`}>
       <div className="xl:border-b-[0.5px] border-border py-4 flex items-center gap-3">
         <div className="w-12 h-12 rounded-full relative overflow-hidden">
           <Image
@@ -29,7 +35,7 @@ const SuggestedAccounts: NextPage<ISuggestedAccountsProps> = ({ profile }) => {
           {profile.userName}
         </h2>
       </div>
-    </div>
+    </Link>
   );
 };
 

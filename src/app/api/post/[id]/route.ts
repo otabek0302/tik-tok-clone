@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 export async function GET(request: Request) {
     try {
         const url = new URL(request.url);
-        const id = url.searchParams.get('id');
+        const id = url.pathname.split('/').pop();
 
         if (!id || typeof id !== 'string') {
             return NextResponse.json({ error: 'Invalid post ID' }, { status: 400 });
@@ -32,10 +32,10 @@ export async function PUT(request: Request) {
     try {
         const { comment, userId } = await request.json();
         const url = new URL(request.url);
-        const id = url.searchParams.get('id');
+        const id = url.pathname.split('/').pop(); 
 
         if (!comment || !userId) {
-            return NextResponse.json({ error: 'Comment and userId are required' }, { status: 400 });
+            return NextResponse.json({ error: 'Comment and user are required' }, { status: 400 });
         }
 
         if (!id || typeof id !== 'string') {
