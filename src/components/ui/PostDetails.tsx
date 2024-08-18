@@ -52,28 +52,25 @@ const PostDetails = ({ postDetails }: IProps) => {
     }
   }, [isVideoMuted]);
 
-  const handleLike = useCallback(
-    async (like: boolean) => {
-      if (userProfile && post) {
-        try {
-          const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-          const res = await axios.put(`${BASE_URL}/api/like`, {
-            userId: userProfile._id,
-            postId: post._id,
-            like,
-          });
+  const handleLike = async (like: boolean) => {
+    if (userProfile && post) {
+      try {
+        const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+        const res = await axios.put(`${BASE_URL}/api/like`, {
+          userId: userProfile._id,
+          postId: post._id,
+          like,
+        });
 
-          setPost((prevPost) => {
-            if (!prevPost) return prevPost;
-            return { ...prevPost, likes: res.data.likes };
-          });
-        } catch (error) {
-          console.error("Failed to like the post:", error);
-        }
+        setPost((prevPost) => {
+          if (!prevPost) return prevPost;
+          return { ...prevPost, likes: res.data.likes };
+        });
+      } catch (error) {
+        console.error("Failed to like the post:", error);
       }
-    },
-    [userProfile, post]
-  );
+    }
+  };
 
   const addComment = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
@@ -152,6 +149,7 @@ const PostDetails = ({ postDetails }: IProps) => {
                 likes={post.likes}
                 handleLike={() => handleLike(true)}
                 handleDislike={() => handleLike(false)}
+                fixed={false}
               />
             )}
           </div>

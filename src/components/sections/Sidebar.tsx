@@ -16,11 +16,20 @@ import { createOrGetUser } from "@/utils";
 import axios from "axios";
 import useAuthStore from "../../../store/authStore";
 
+interface IProfile {
+  _id: string;
+  _type: string;
+  userName: string;
+  image: string;
+}
+
 const Sidebar = () => {
   const pathname = usePathname();
   const [showSidebar, setShowSidebar] = useState<Boolean>(true);
 
   const { userProfile, addUser, fetchAllUsers } = useAuthStore();
+
+  const profile: IProfile | null = userProfile;
 
   const login = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
@@ -47,7 +56,12 @@ const Sidebar = () => {
         <div className="xl:w-[240px] w-20 flex flex-col justify-start mb-4 border-r-[0.5px] border-border xl:border-0 p-3 ">
           <ul className="xl:border-b-[0.5px] border-border xl:pb-4">
             {sidebarNav.map((nav, i) => (
-              <Link href={nav.link} key={i}>
+              <Link
+                href={
+                  nav.name === "Profile" ? `/profile/${profile?._id}` : nav.link
+                }
+                key={i}
+              >
                 <li
                   className={`${
                     pathname === nav.link ? "active-link" : "link"

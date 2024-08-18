@@ -11,9 +11,28 @@ import { IoIosSearch } from "react-icons/io";
 import { MdOutlineLogout } from "react-icons/md";
 
 import { googleLogout } from "@react-oauth/google";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { IUser } from "../../../types";
 
 const Navbar = () => {
+  const [user, setUser] = useState<IUser | null>();
+  const [searchValue, setSearchValue] = useState("");
+  const router = useRouter();
+
   const { userProfile, removeUser } = useAuthStore();
+
+  useEffect(() => {
+    setUser(userProfile);
+  }, [userProfile]);
+
+  const handleSearch = (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+
+    if (searchValue) {
+      router.push(`/search?query=${searchValue}`);
+    }
+  };
 
   return (
     <div className="w-full flex justify-between items-center border-b-[0.5px] border-border py-2 px-4">
@@ -23,18 +42,25 @@ const Navbar = () => {
           <span className="text-2xl font-black pt-1 text-copy">Tik Tok</span>
         </Link>
       </div>
-      <div className="flex-1 flex justify-center">
-        <div className="flex items-center justify-center max-w-[500px] h-[46px] rounded-full overflow-hidden w-full bg-white bg-opacity-[0.3]">
-          <input
-            type="text"
-            placeholder="Search"
-            className="w-full h-full bg-transparent py-2 px-4 text-base text-copy placeholder:text-copy-lighter placeholder:font-light focus:outline-none"
-          />
-          <button className="flex gap-1.5 items-center justify-center h-9 rounded-sm px-4 border-l-[0.5px] border-border text-copy-lighter hover:text-copy">
-            <IoIosSearch className="text-2xl" />
-          </button>
+      <form className="w-full" onSubmit={handleSearch}>
+        <div className="flex-1 flex justify-center">
+          <div className="flex items-center justify-center max-w-[500px] h-[46px] rounded-full overflow-hidden w-full bg-white bg-opacity-[0.3]">
+            <input
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              type="text"
+              placeholder="Search"
+              className="w-full h-full bg-transparent py-2 px-4 text-base text-copy placeholder:text-copy-lighter placeholder:font-light focus:outline-none"
+            />
+            <button
+              onClick={handleSearch}
+              className="flex gap-1.5 items-center justify-center h-9 rounded-sm px-4 border-l-[0.5px] border-border text-copy-lighter hover:text-copy"
+            >
+              <IoIosSearch className="text-2xl" />
+            </button>
+          </div>
         </div>
-      </div>
+      </form>
       <div className="ml-5">
         <div className="flex items-center">
           {userProfile && (

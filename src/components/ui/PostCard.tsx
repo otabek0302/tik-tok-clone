@@ -7,23 +7,32 @@ import { Post } from "@/lib/types";
 import { NextPage } from "next";
 import { useEffect, useRef, useState } from "react";
 import { BsFillPauseFill, BsFillPlayFill } from "react-icons/bs";
-import { FaBookmark, FaCommentDots, FaHeart } from "react-icons/fa";
+import { FaBookmark, FaCommentDots } from "react-icons/fa";
 import { GoPlus, GoVerified } from "react-icons/go";
 import { HiVolumeOff, HiVolumeUp } from "react-icons/hi";
 import { IoIosShareAlt } from "react-icons/io";
+import useAuthStore from "../../../store/authStore";
+import axios from "axios";
+import { Video } from "../../../types";
+import LikeButton from "./LikeButton";
 
 interface IProps {
-  post: Post;
+  postDetails: Post;
   isShowingOnHome?: boolean;
 }
+interface IUserProfile {
+  _id: string;
+}
 
-const PostCard: NextPage<IProps> = ({ post, isShowingOnHome }) => {
+const PostCard: NextPage<IProps> = ({ postDetails, isShowingOnHome }) => {
+  const [post, setPost] = useState<Video>(postDetails);
   const [showCaption, setShowCaption] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [isHover, setIsHover] = useState(false);
   const [isVideoMuted, setIsVideoMuted] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement>(null);
+  const { userProfile }: { userProfile: IUserProfile | null } = useAuthStore();
 
   const onVideoPress = () => {
     if (playing) {
@@ -46,6 +55,28 @@ const PostCard: NextPage<IProps> = ({ post, isShowingOnHome }) => {
       videoRef.current.muted = isVideoMuted;
     }
   }, [isVideoMuted]);
+
+  const handleLike = async (like: boolean) => {
+    if (userProfile && post) {
+      try {
+        const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+        const res = await axios.put(`${BASE_URL}/api/like`, {
+          userId: userProfile._id,
+          postId: post._id,
+          like,
+        });
+
+        setPost((prevPost) => {
+          if (!prevPost) return prevPost;
+          return { ...prevPost, likes: res.data.likes };
+        });
+      } catch (error) {
+        console.error("Failed to like the post:", error);
+      }
+    } else {
+      return alert("First login then like the post !");
+    }
+  };
 
   if (!isShowingOnHome) {
     return (
@@ -195,10 +226,15 @@ const PostCard: NextPage<IProps> = ({ post, isShowingOnHome }) => {
           </li>
           <li className="cursor-pointer">
             <div className="w-12 h-12 bg-[#ffffff1f] hover:bg-[#ffffff11] rounded-full flex items-center justify-center">
-              <FaHeart className="text-white text-xl" />
+              <LikeButton
+                likes={post.likes}
+                handleLike={() => handleLike(true)}
+                handleDislike={() => handleLike(false)}
+                fixed={true}
+              />
             </div>
             <span className="mt-3 block text-copy-lighter text-xs font-semibold leading-tight text-center">
-              44.3K
+              {post.likes.length}
             </span>
           </li>
           <li className="cursor-pointer">
@@ -206,7 +242,7 @@ const PostCard: NextPage<IProps> = ({ post, isShowingOnHome }) => {
               <FaCommentDots className="text-white text-xl" />
             </div>
             <span className="mt-3 block text-copy-lighter text-xs font-semibold leading-tight text-center">
-              44.3K
+              {post.comments?.length}
             </span>
           </li>
           <li className="cursor-pointer">
@@ -214,7 +250,7 @@ const PostCard: NextPage<IProps> = ({ post, isShowingOnHome }) => {
               <FaBookmark className="text-white text-xl" />
             </div>
             <span className="mt-3 block text-copy-lighter text-xs font-semibold leading-tight text-center">
-              44.3K
+              0.0
             </span>
           </li>
           <li className="cursor-pointer">
@@ -222,7 +258,7 @@ const PostCard: NextPage<IProps> = ({ post, isShowingOnHome }) => {
               <IoIosShareAlt className="text-white text-xl" />
             </div>
             <span className="mt-3 block text-copy-lighter text-xs font-semibold leading-tight text-center">
-              44.3K
+              0.0
             </span>
           </li>
         </ul>
