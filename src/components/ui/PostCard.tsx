@@ -90,13 +90,13 @@ const PostCard: NextPage<IProps> = ({ postDetails, isShowingOnHome }) => {
             loop
             autoPlay
             ref={videoRef}
-            src={post.video.asset.url}
+            src={post?.video?.asset?.url}
             className="w-full h-full object-cover"
           />
           <div className="w-full absolute bottom-0 z-20 bg-gradient-to-t from-black p-5">
-            <Link href={`/profile/${post.postedBy?._id}`}>
+            <Link href={`/profile/${post?.postedBy?._id}`}>
               <h3 className="my-3 text-copy-light text-sm font-normal leading-tight flex items-center">
-                {post.postedBy.userName}{" "}
+                {post?.postedBy?.userName}{" "}
                 <GoVerified className="text-blue-400 text-md ml-1" />
               </h3>
             </Link>
@@ -110,13 +110,13 @@ const PostCard: NextPage<IProps> = ({ postDetails, isShowingOnHome }) => {
                   showCaption ? "line-clamp-6" : "line-clamp-1"
                 }`}
               >
-                {post.caption}
+                {post?.caption}
               </p>
               <button
                 onClick={() => setShowCaption(!showCaption)}
                 className="text-copy-light text-sm font-normal leading-tight cursor-pointer"
               >
-                <Link href={`/posts/${post._id}`}>
+                <Link href={`/posts/${post?._id}`}>
                   {showCaption ? "show less" : "read more"}
                 </Link>
               </button>

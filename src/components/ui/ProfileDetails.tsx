@@ -77,7 +77,7 @@ const ProfileDetails = ({ profile }: IProps) => {
         <div className="grid grid-cols-3 gap-5">
           {videosList.length > 0 ? (
             videosList.map((post: Video, idx: number) => (
-              <PostCard key={idx} post={post} />
+              <PostCard key={idx} postDetails={post} />
             ))
           ) : (
             <NoResults
