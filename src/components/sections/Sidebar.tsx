@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import Link from "next/link";
 import Footer from "./Footer";
@@ -25,10 +25,10 @@ interface IProfile {
 
 const Sidebar = () => {
   const pathname = usePathname();
-  const [showSidebar, setShowSidebar] = useState<Boolean>(true);
+  const [showSidebar, setShowSidebar] = useState<boolean>(true);
 
   const { userProfile, addUser, fetchAllUsers } = useAuthStore();
-
+  
   const profile: IProfile | null = userProfile;
 
   const login = useGoogleLogin({
@@ -58,7 +58,7 @@ const Sidebar = () => {
             {sidebarNav.map((nav, i) => (
               <Link
                 href={
-                  nav.name === "Profile" ? `/profile/${profile?._id}` : nav.link
+                  nav.name === "Profile" && profile ? `/profile/${profile._id}` : nav.link
                 }
                 key={i}
               >
