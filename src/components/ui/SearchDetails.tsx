@@ -30,7 +30,7 @@ const SearchDetails = () => {
 
   const fetchVideos = async () => {
     const BASE_URL =
-      process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+      process.env.NEXT_PUBLIC_BASE_URL || "https://tik-tok-clone-sandy.vercel.app";
     try {
       const res = await fetch(`${BASE_URL}/api/search?query=${search}`);
       if (!res.ok) {
