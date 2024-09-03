@@ -13,15 +13,12 @@ import { HiVolumeOff, HiVolumeUp } from "react-icons/hi";
 import { IoIosShareAlt } from "react-icons/io";
 import useAuthStore from "../../../store/authStore";
 import axios from "axios";
-import { Video } from "../../../types";
+import { IUser, Video } from "../../../types";
 import LikeButton from "./LikeButton";
 
 interface IProps {
   postDetails: Post;
   isShowingOnHome?: boolean;
-}
-interface IUserProfile {
-  _id: string;
 }
 
 const PostCard: NextPage<IProps> = ({ postDetails, isShowingOnHome }) => {
@@ -30,9 +27,14 @@ const PostCard: NextPage<IProps> = ({ postDetails, isShowingOnHome }) => {
   const [playing, setPlaying] = useState(false);
   const [isHover, setIsHover] = useState(false);
   const [isVideoMuted, setIsVideoMuted] = useState(false);
+  const [user, setUser] = useState<IUser | null>();
 
   const videoRef = useRef<HTMLVideoElement>(null);
-  const { userProfile }: { userProfile: IUserProfile | null } = useAuthStore();
+  const { userProfile } = useAuthStore();
+
+  useEffect(() => {
+    setUser(userProfile);
+  }, [userProfile]);
 
   const onVideoPress = () => {
     if (playing) {
@@ -61,7 +63,7 @@ const PostCard: NextPage<IProps> = ({ postDetails, isShowingOnHome }) => {
       try {
         const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
         const res = await axios.put(`${BASE_URL}/api/like`, {
-          userId: userProfile._id,
+          userId: user._id,
           postId: post._id,
           like,
         });
