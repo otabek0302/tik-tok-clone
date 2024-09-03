@@ -17,13 +17,6 @@ import axios from "axios";
 import useAuthStore from "../../../store/authStore";
 import { IUser } from "../../../types";
 
-interface IProfile {
-  _id: any;
-  _type: string;
-  userName: string;
-  image: string;
-}
-
 const Sidebar = () => {
   const pathname = usePathname();
   const [showSidebar, setShowSidebar] = useState<boolean>(true);
