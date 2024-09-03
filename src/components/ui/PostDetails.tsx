@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState, useCallback } from "react";
-import { Video } from "../../../types";
+import { IUser, Video } from "../../../types";
 import { GoVerified } from "react-icons/go";
 
 import useAuthStore from "../../../store/authStore";
@@ -26,9 +26,14 @@ const PostDetails = ({ postDetails }: IProps) => {
   const [comment, setComment] = useState<string>("");
   const [isPostingComment, setIsPostingComment] = useState<boolean>(false);
   const [post, setPost] = useState<Video>(postDetails);
+  const [user, setUser] = useState<IUser | null>();
 
   const videoRef = useRef<HTMLVideoElement>(null);
-  const { userProfile }: { userProfile: IUserProfile | null } = useAuthStore();
+  const { userProfile } = useAuthStore();
+
+  useEffect(() => {
+    setUser(userProfile);
+  }, [userProfile]);
 
   const onVideoPress = useCallback(() => {
     if (playing) {
@@ -53,11 +58,11 @@ const PostDetails = ({ postDetails }: IProps) => {
   }, [isVideoMuted]);
 
   const handleLike = async (like: boolean) => {
-    if (userProfile && post) {
+    if (user && post) {
       try {
         const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
         const res = await axios.put(`${BASE_URL}/api/like`, {
-          userId: userProfile._id,
+          userId: user._id,
           postId: post._id,
           like,
         });
@@ -69,18 +74,20 @@ const PostDetails = ({ postDetails }: IProps) => {
       } catch (error) {
         console.error("Failed to like the post:", error);
       }
+    } else {
+      alert("First login then like the post!");
     }
   };
 
   const addComment = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
 
-    if (userProfile && post && comment.trim()) {
+    if (user && post && comment.trim()) {
       setIsPostingComment(true);
       try {
         const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
         const res = await axios.put(`${BASE_URL}/api/post/${post._id}`, {
-          userId: userProfile._id,
+          userId: user._id,
           comment,
         });
 
