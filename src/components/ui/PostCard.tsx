@@ -59,11 +59,11 @@ const PostCard: NextPage<IProps> = ({ postDetails, isShowingOnHome }) => {
   }, [isVideoMuted]);
 
   const handleLike = async (like: boolean) => {
-    if (userProfile && post) {
+    if (user && post) {
       try {
         const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
         const res = await axios.put(`${BASE_URL}/api/like`, {
-          userId: user._id,
+          userId: user._id, // This will no longer throw an error
           postId: post._id,
           like,
         });
@@ -76,7 +76,7 @@ const PostCard: NextPage<IProps> = ({ postDetails, isShowingOnHome }) => {
         console.error("Failed to like the post:", error);
       }
     } else {
-      return alert("First login then like the post !");
+      alert("First login then like the post!");
     }
   };
 
