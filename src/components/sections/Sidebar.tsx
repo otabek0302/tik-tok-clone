@@ -5,7 +5,7 @@ import Footer from "./Footer";
 import SuggestedAccounts from "../ui/SuggestedAccounts";
 
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AiOutlineMenu } from "react-icons/ai";
 import { ImCancelCircle } from "react-icons/im";
 import { sidebarNav } from "@/utils/constants";
@@ -15,9 +15,10 @@ import { createOrGetUser } from "@/utils";
 
 import axios from "axios";
 import useAuthStore from "../../../store/authStore";
+import { IUser } from "../../../types";
 
 interface IProfile {
-  _id: string;
+  _id: any;
   _type: string;
   userName: string;
   image: string;
@@ -26,10 +27,9 @@ interface IProfile {
 const Sidebar = () => {
   const pathname = usePathname();
   const [showSidebar, setShowSidebar] = useState<boolean>(true);
+  const [user, setUser] = useState<IUser | null>();
 
   const { userProfile, addUser, fetchAllUsers } = useAuthStore();
-  
-  const profile: IProfile | null = userProfile;
 
   const login = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
@@ -43,6 +43,10 @@ const Sidebar = () => {
     },
     onError: (error) => console.log("Login Failed:", error),
   });
+
+  useEffect(() => {
+    setUser(userProfile);
+  }, [userProfile]);
 
   return (
     <div>
@@ -58,7 +62,7 @@ const Sidebar = () => {
             {sidebarNav.map((nav, i) => (
               <Link
                 href={
-                  nav.name === "Profile" && profile ? `/profile/${profile._id}` : nav.link
+                  nav.name === "Profile" && user ? `/profile/${user._id}` : nav.link
                 }
                 key={i}
               >
